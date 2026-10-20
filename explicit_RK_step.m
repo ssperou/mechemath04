@@ -20,6 +20,7 @@ function [XB, num_evals] = explicit_RK_step(rate_func_in,t,XA,h,BT_struct)
     b = BT_struct.B; %current b value
     c = BT_struct.C; %current c value
     
+    num_evals = 0;
     %Create K matrix
     m = length(XA); %should only equal 1
     s = length(b); %number of stages
@@ -29,16 +30,16 @@ function [XB, num_evals] = explicit_RK_step(rate_func_in,t,XA,h,BT_struct)
     for i = 2:s;
         ai = a(i, :);
         ci = c(i);
-
+        
         ti = t + ci*h;
         sumi = K(i-1)*ai';
         Xi = XA + h*sumi;
-        K(i) = rate_func_in(ti, Xi)
+        K(i) = rate_func_in(ti, Xi);
+        num_evals = num_evals + 1;
     end
 
     sumb = K*b;
 
     XB = XA + h*sumb;
 
-    sum_a = 
 end
