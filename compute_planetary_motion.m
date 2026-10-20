@@ -28,6 +28,7 @@
 %At the bottom of this file is a function usage_example()
 %which shows how to use compute_planetary_motion(...)
 %You can start from there and then tweak it.
+% testing if this works
 function V_list = compute_planetary_motion(t_list,V0,orbit_params)
     m_sun = orbit_params.m_sun;
     m_planet = orbit_params.m_planet;
