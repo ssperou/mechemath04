@@ -27,7 +27,7 @@ function [XB, num_evals] = explicit_RK_step(rate_func_in,t,XA,h,BT_struct)
     K = zeros(m, s);
     
     %Create for loop for K
-    for i = 2:s;
+    for i = 2:s
         ai = a(i, :);
         ci = c(i);
         

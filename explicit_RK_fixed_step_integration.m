@@ -37,7 +37,7 @@ function [t_list,X_list,h_avg, num_evals] = ...
         for j = 1:N
             t = t_list(j);
             XA = X_list(j,:);
-            [XB,iter] = explicit_RK_step(rate_func_in,t,XA',h,BT_struct);
+            [XB,iter] = explicit_RK_step(rate_func_in,t,XA',h_avg,BT_struct);
            
             X_list(j+1,:) = XB;
             num_evals = num_evals + iter;
