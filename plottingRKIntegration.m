@@ -43,14 +43,26 @@ function plottingRKIntegration()
     %Van der Houwen/Wray
     [t_list_HW,X_list_HW,h_avg_HW, num_evals_HW] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,HouwenWray)
 
-    %Plotting
+    %Plotting integration
     figure();
     h1 = plot(t_range, V_list(:, 1), 'k-'); %Analytical Solution
     hold on;
     h2 = plot(t_list_FE, X_list_FE(:, 1), 'r--');
     h3 = plot(t_list_EM, X_list_EM(:,1), 'b--');
     h4 = plot(t_list_HW, X_list_HW(:, 1), 'g--');
-    title("Runge Kutta Integration", 'Interpreter', 'Latex');
+    title("Runge Kutta Integration (X Values)", 'Interpreter', 'Latex');
+    xlabel("$t(-)$", 'Interpreter', 'Latex'); xlabel("$t(-)$", 'Interpreter', 'Latex');
+    legend([h1, h2, h3, h4], "Analytical", "Forward Euler", "Explicit Midpoint", "Houwen/Wray", "Interpreter", "Latex", "Location", "northeast");
+    hold off;
+
+    %Plotting orbit?
+    figure();
+    h1 = plot(t_range, V_list(:, 2), 'k-'); %Analytical Solution
+    hold on;
+    h2 = plot(t_list_FE, X_list_FE(:, 2), 'r--');
+    h3 = plot(t_list_EM, X_list_EM(:,2), 'b--');
+    h4 = plot(t_list_HW, X_list_HW(:, 2), 'g--');
+    title("Runge Kutta Integration (Y Values)", 'Interpreter', 'Latex');
     xlabel("$t(-)$", 'Interpreter', 'Latex'); xlabel("$t(-)$", 'Interpreter', 'Latex');
     legend([h1, h2, h3, h4], "Analytical", "Forward Euler", "Explicit Midpoint", "Houwen/Wray", "Interpreter", "Latex", "Location", "northeast");
     hold off;
