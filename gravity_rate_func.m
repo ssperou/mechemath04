@@ -19,8 +19,8 @@ function dVdt = gravity_rate_func(t,V,orbit_params)
     r = [V(1), V(2)]; %Position of the planet
     dRdt = [V(3), V(4)];
     
-
+    
     dV2dt2 = -(m_sun*G)*(r)/(norm(r))^3;
 
-    dVdt = [V(3); V(4); dV2dt2];
+    dVdt = [V(3); V(4); dV2dt2(1); dV2dt2(2)];
 end
