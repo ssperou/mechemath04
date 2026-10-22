@@ -13,4 +13,9 @@ function createStructs();
     HouwenWray.A = [0, 0, 0;8/15, 0, 0;1/4, 5/12, 0];
     HouwenWray.B = [0.25, 0, 0.75];
     HouwenWray.C = [0, 8/15, 2/3];
+
+    orbit_params = struct();
+    orbit_params.m_sun = 1;
+    orbit_params.m_planet = 1;
+    orbit_params.G = 40;
 end

@@ -16,11 +16,11 @@ function dVdt = gravity_rate_func(t,V,orbit_params)
     m_planet = orbit_params.m_planet; %mass of planet
     G = orbit_params.G; %Gravitational constant
 
-    r = [V(1), V(2)]; %Position of the planet
-    dRdt = [V(3), V(4)];
+    r = [V(1); V(2)]; %Position of the planet
+    dRdt = [V(3); V(4)];
     
     
-    dV2dt2 = -(m_sun*G)*(r)/(norm(r))^3;
+    dR2dt2 = -(m_sun*G)*(r)/(norm(r))^3;
 
-    dVdt = [V(3); V(4); dV2dt2(1); dV2dt2(2)];
+    dVdt = [dRdt;dR2dt2];
 end

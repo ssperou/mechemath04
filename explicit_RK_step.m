@@ -27,18 +27,23 @@ function [XB, num_evals] = explicit_RK_step(rate_func_in,t,XA,h,BT_struct)
     K = zeros(m, s);
     
     %Create for loop for K
-    for i = 2:s
-        ai = a(i, :);
+    for i = 1:s
+        ai = a(i, 1:i-1);
         ci = c(i);
         
         ti = t + ci*h;
-        sumi = K(i-1)*ai';
-        Xi = XA + h*sumi;
-        K(i) = rate_func_in(ti, Xi);
+
+        if i == 1
+            Xi = XA;
+        else
+            sumi = K(:, 1:i-1)*ai';
+            Xi = XA + h*sumi;
+        end
+        K(:, i) = rate_func_in(ti, Xi);
         num_evals = num_evals + 1;
     end
 
-    sumb = K*b;
+    sumb = K*b(:);
 
     XB = XA + h*sumb;
 
