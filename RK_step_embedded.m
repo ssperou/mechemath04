@@ -43,8 +43,8 @@ function [XB1, XB2, num_evals] = RK_step_embedded(rate_func_in,t,XA,h,BT_struct)
         num_evals = num_evals + 1;
     end
 
-    sumb1 = K.*b(1,:);
-    sumb2 = K.*b(2,:);
+    sumb1 = K*b(1,:)';
+    sumb2 = K*b(2,:)';
 
     XB1 = XA + h*sumb1;
     XB2 = XA + h*sumb2;

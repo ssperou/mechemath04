@@ -51,20 +51,22 @@ function plottingRKLocalTrunc(sol, t_ref, num_iter)
 
         xb1_error(i) = norm(XB1 - x_true);
         xb2_error(i) = norm(XB2 - x_true);
+
+        timestep_error(i) = norm(x_true - XA);
        
     end
 
-    % %%%%%%% P-VALUE CALCULATION
-    % h_filter = h_list <= 1e-2;
-    % log_h_list = log10(h_list(h_filter))';
+    %%%%%%% P-VALUE CALCULATION
+    h_filter = h_list <= 1e-2;
+    log_h_list = log10(h_list(h_filter))';
     % 
-    % % solution p-value calculation
-    % log_solution_list = log10(solution_list(h_filter));
-    % solution_coeff = polyfit(log_h_list, log_solution_list, 1);
+    % solution p-value calculation
+    %log_solution_list = log10(solution_list(h_filter));
+    %solution_coeff = polyfit(log_h_list, log_solution_list, 1);
     % 
-    % % Explicit Midpoint p-value calculation
-    % log_explicit_midpoint_error = log10(explicit_midpoint_error(h_filter));
-    % explicit_midpoint_coeff = polyfit(log_h_list, log_explicit_midpoint_error, 1);
+    % Embedded Error p-value calculation
+    log_embedded_error = log10(embedded_error(h_filter));
+    embedded_coeff = polyfit(log_h_list, log_embedded_error, 1);
     % 
     % % Forward Euler p-value calculation
     % log_forward_euler_error = log10(forward_euler_error(h_filter));
@@ -79,8 +81,8 @@ function plottingRKLocalTrunc(sol, t_ref, num_iter)
     % backward_euler_coeff = polyfit(log_h_list, log_backward_euler_error, 1);
     % 
     % % % P-VALUES
-    % solution_p = solution_coeff(1)
-    % forward_p = forward_euler_coeff(1)
+    %solution_p = solution_coeff(1)
+    embedded_p = embedded_coeff(1)
     % backward_p = backward_euler_coeff(1)
     % explicit_p = explicit_midpoint_coeff(1)
     % implicit_p = implicit_midpoint_coeff(1)
@@ -102,10 +104,11 @@ function plottingRKLocalTrunc(sol, t_ref, num_iter)
 
     %%%%%%% STEP SIZE PLOTS
     figure;
-    loglog(h_list, embedded_error, 'k-', 'markersize', 25, 'Displayname',"|XB1-XB2|");
+    loglog(h_list, embedded_error, 'k-', 'Displayname',"|XB1-XB2|");
     hold on;
-    loglog(h_list, xb1_error, 'b.', 'markersize', 25, 'Displayname',"XB1");
-    loglog(h_list, xb2_error, 'g.', 'markersize', 25, 'Displayname',"XB2");
+    loglog(h_list, xb1_error, 'b.', 'markersize', 12, 'Displayname',"XB1");
+    loglog(h_list, xb2_error, 'g.', 'markersize', 12, 'Displayname',"XB2");
+    loglog(h_list, timestep_error, 'k.', 'markersize', 12, 'Displayname',"Timestep Diff");
    
     grid on;
 
