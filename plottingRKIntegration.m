@@ -44,10 +44,10 @@ function plottingRKIntegration()
     [t_list_FE,X_list_FE,h_avg_FE, num_evals_FE] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,Ralston);
     
     %Explicit Midpoint
-    [t_list_EM,X_list_EM,h_avg_EM, num_evals_EM] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,ExplicitMidpoint)
+    [t_list_EM,X_list_EM,h_avg_EM, num_evals_EM] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,ExplicitMidpoint);
     
     %Van der Houwen/Wray
-    [t_list_HW,X_list_HW,h_avg_HW, num_evals_HW] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,HouwenWray)
+    [t_list_HW,X_list_HW,h_avg_HW, num_evals_HW] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,HouwenWray);
     
 
 

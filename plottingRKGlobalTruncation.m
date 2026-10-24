@@ -15,6 +15,11 @@ function plottingRKGlobalTruncation()
     HouwenWray.B = [0.25, 0, 0.75];
     HouwenWray.C = [0, 8/15, 2/3];
 
+    Ralston = struct();
+    Ralston.A = [0,0;2/3,0];
+    Ralston.B = [1/4,3/4];
+    Ralston.C = [0, 2/3];
+
     orbit_params = struct();
     orbit_params.m_sun = 1;
     orbit_params.m_planet = 1;
@@ -41,6 +46,7 @@ function plottingRKGlobalTruncation()
     num_iter_EM = zeros(40, 1);
     error_HW = zeros(40, 1);
     num_iter_HW = zeros(40, 1);
+
     %Forward Euler
     for i = 1:40
         h = h_list(i);
@@ -50,6 +56,7 @@ function plottingRKGlobalTruncation()
         num_iter_FE(i) = num_evals_FE;
     end
     log_error_FE = log10(error_FE);
+
     %Explicit Midpoint
     for i = 1:40
         h = h_list(i);
