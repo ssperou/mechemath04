@@ -1,14 +1,11 @@
 % plot local truncation errors for explicit runge kutta methods
-function plottingRKLocalTrunc(func, sol, t_ref, num_iter)
+function plottingRKLocalTrunc(sol, t_ref, num_iter)
     arguments
-        func (1,:) function_handle = @gravity_rate_func;
         sol (1,:) function_handle = @compute_planetary_motion;
         t_ref (1,:) double = 0.439
         num_iter (1,:) double = 100
-        
-        
     end
-    
+    %Input necessary structs
     DormandPrince = struct();
     DormandPrince.C = [0, 1/5, 3/10, 4/5, 8/9, 1, 1];
     DormandPrince.B = [35/384, 0, 500/1113, 125/192, -2187/6784, 11/84, 0;...
@@ -20,19 +17,23 @@ function plottingRKLocalTrunc(func, sol, t_ref, num_iter)
                        19372/6561, -25360/2187, 64448/6561, -212/729, 0, 0,0;...
                        9017/3168, -355/33, 46732/5247, 49/176, -5103/18656, 0,0;...
                        35/384, 0, 500/1113, 125/192, -2187/6784, 11/84,0];
+
     orbit_params = struct();
     orbit_params.m_sun = 1;
     orbit_params.m_planet = 1;
     orbit_params.G = 40;
+
+    %Initialize values
+    func = @(t, V) gravity_rate_func(t, V, orbit_params);
     x0 = 8;
     y0 = 0;
     dxdt0 = 0;
     dydt0 = 1.5;
     
     V0 = [x0;y0;dxdt0;dydt0];
-    t_range = linspace(0,30,100);
 
-    XA = sol(t_range,V0,orbit_params);
+    XA = sol(t_ref,V0,orbit_params);
+    XA = XA(:);
     h_list = logspace(-3,1,num_iter);
 
     embedded_error = zeros(num_iter,1);
@@ -44,7 +45,7 @@ function plottingRKLocalTrunc(func, sol, t_ref, num_iter)
         h = h_list(i);
         [XB1, XB2, num_evals] = RK_step_embedded(func, t_ref, XA, h, DormandPrince);
 
-        x_true = sol(t_ref + h);
+        x_true = sol(t_ref + h, V0, orbit_params);
 
         embedded_error(i) = norm(XB1 - XB2);
 
@@ -101,10 +102,10 @@ function plottingRKLocalTrunc(func, sol, t_ref, num_iter)
 
     %%%%%%% STEP SIZE PLOTS
     figure;
-    loglog(h_list, embedded_error, 'k-', 'markersize', 25, 'Color', [0 0.65 0], 'Displayname',"|XB1-XB2|");
+    loglog(h_list, embedded_error, 'k-', 'markersize', 25, 'Displayname',"|XB1-XB2|");
     hold on;
-    loglog(h_list, xb1_error, 'b-', 'markersize', 25, 'Color', [0 0.65 0], 'Displayname',"XB1");
-    loglog(h_list, xb2_error, 'g-', 'markersize', 25, 'Color', [0 0.65 0], 'Displayname',"XB2");
+    loglog(h_list, xb1_error, 'b.', 'markersize', 25, 'Displayname',"XB1");
+    loglog(h_list, xb2_error, 'g.', 'markersize', 25, 'Displayname',"XB2");
    
     grid on;
 
