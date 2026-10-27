@@ -3,7 +3,7 @@ function plottingRKLocalTrunc(sol, t_ref, num_iter)
     arguments
         sol (1,:) function_handle = @compute_planetary_motion;
         t_ref (1,:) double = 0.439
-        num_iter (1,:) double = 100
+        num_iter (1,:) double = 200
     end
     %Input necessary structs
     DormandPrince = struct();
@@ -34,11 +34,12 @@ function plottingRKLocalTrunc(sol, t_ref, num_iter)
 
     XA = sol(t_ref,V0,orbit_params);
     XA = XA(:);
-    h_list = logspace(-3,1,num_iter);
+    h_list = logspace(-4,0,num_iter);
 
     embedded_error = zeros(num_iter,1);
     xb1_error = zeros(num_iter,1);
     xb2_error = zeros(num_iter,1);
+    diff_error = zeros(num_iter,1);
    
 
     for i = 1:num_iter
@@ -51,72 +52,48 @@ function plottingRKLocalTrunc(sol, t_ref, num_iter)
 
         xb1_error(i) = norm(XB1 - x_true);
         xb2_error(i) = norm(XB2 - x_true);
+        diff_error(i) = norm(XB1 - XB2);
 
         timestep_error(i) = norm(x_true - XA);
        
     end
 
-    %%%%%%% P-VALUE CALCULATION
-    h_filter = h_list <= 1e-2;
+    %%%%%%% P-VALUE CALCULATIONS
+    h_filter = (h_list >= 1e-1) & (h_list <= 1e0);
     log_h_list = log10(h_list(h_filter))';
-    % 
-    % solution p-value calculation
-    %log_solution_list = log10(solution_list(h_filter));
-    %solution_coeff = polyfit(log_h_list, log_solution_list, 1);
-    % 
-    % Embedded Error p-value calculation
-    log_embedded_error = log10(embedded_error(h_filter));
-    embedded_coeff = polyfit(log_h_list, log_embedded_error, 1);
-    % 
-    % % Forward Euler p-value calculation
-    % log_forward_euler_error = log10(forward_euler_error(h_filter));
-    % forward_euler_coeff = polyfit(log_h_list, log_forward_euler_error, 1);
-    % 
-    % % % % Implicit Midpoint p-value calculation
-    % log_implicit_midpoint_error = log10(implicit_midpoint_error(h_filter));
-    % implicit_midpoint_coeff = polyfit(log_h_list, log_implicit_midpoint_error, 1);
-    % 
-    % % Backward Euler p-value calculation
-    % log_backward_euler_error = log10(backward_euler_error(h_filter));
-    % backward_euler_coeff = polyfit(log_h_list, log_backward_euler_error, 1);
-    % 
-    % % % P-VALUES
-    %solution_p = solution_coeff(1)
-    embedded_p = embedded_coeff(1)
-    % backward_p = backward_euler_coeff(1)
-    % explicit_p = explicit_midpoint_coeff(1)
-    % implicit_p = implicit_midpoint_coeff(1)
-    % 
-    % 
-    % 
-    % % FIT LINE CODE
-    % explicit_midpoint_fit = 10.^polyval(explicit_midpoint_coeff, log10(h_list));
-    % forward_euler_fit = 10.^polyval(forward_euler_coeff, log10(h_list));
-    % solution_fit = 10.^polyval(solution_coeff, log10(h_list));
-    % 
-    % %%%%%% FIT LINE PLOTS
-    % loglog(10.^log10(h_list), explicit_midpoint_fit, '-', 'Linewidth', 5, 'Color', [0.5 1 0.5], 'Displayname',"Exp. Mid. Fit");
-    % hold on;
-    % grid on;
-    % loglog(10.^log10(h_list), forward_euler_fit, '-', 'Linewidth', 5, 'Color', [1 0.5 0.5], 'Displayname',"Forw. Euler Fit");
-    % loglog(10.^log10(h_list), solution_fit, '-', 'Linewidth', 5, 'Color', [0.6 0.6 1], 'Displayname',"Abs. Diff. Fit");
+
+    % XB1 error p-value calculation
+    log_xb1_error = log10(xb1_error(h_filter));
+    XB1_coeff = polyfit(log_h_list, log_xb1_error,1);
+    XB1_p = XB1_coeff(1)
+
+    % XB2 error p-value calculation
+    log_xb2_error = log10(xb2_error(h_filter));
+    XB2_coeff = polyfit(log_h_list, log_xb2_error,1);
+    XB2_p = XB2_coeff(1)
+
+    % Embedded diff error p-value calculation
+    log_diff_error = log10(diff_error(h_filter));
+    diff_coeff = polyfit(log_h_list, log_diff_error,1);
+    diff_p = diff_coeff(1)
 
 
     %%%%%%% STEP SIZE PLOTS
-    figure;
-    loglog(h_list, embedded_error, 'k-', 'Displayname',"|XB1-XB2|");
+    figure(1)
+    loglog(h_list, xb1_error, 'b.', 'markersize', 15, 'Displayname',"$X_{B1}$");
     hold on;
-    loglog(h_list, xb1_error, 'b.', 'markersize', 12, 'Displayname',"XB1");
-    loglog(h_list, xb2_error, 'g.', 'markersize', 12, 'Displayname',"XB2");
-    loglog(h_list, timestep_error, 'k.', 'markersize', 12, 'Displayname',"Timestep Diff");
+    loglog(h_list, xb2_error, 'g.', 'markersize', 15, 'Displayname',"$X_{B2}$");
+    loglog(h_list, embedded_error, 'r--', 'linewidth', 2,'Displayname',"|$X_{B1}-X_{B2}$|");
+    loglog(h_list, timestep_error, 'k--', 'linewidth',2, 'Displayname',"$|f(t_{\rm ref}+h)-f(t_{\rm ref})|$");
    
     grid on;
+    axis([1e-4 1e0 1e-18 1e3])
 
-    title('Local Truncation Error $\epsilon$ for Four Methods vs Timesteps', 'Interpreter', 'Latex', 'FontSize',16);
-    legend('Location','southeast', 'Interpreter', 'Latex','FontSize',12);
-    xlabel("Step size $h$ (-)", 'Interpreter', 'Latex','FontSize',16);
-    ylabel("Local Truncation Error $\epsilon$ (-)", 'Interpreter', 'Latex','FontSize',16);
-    set(gca,"TickLabelInterpreter",'latex');
+    legend('Location','southeast', 'Interpreter', 'Latex','FontSize',16);
+    set(gca,"TickLabelInterpreter",'latex', 'fontsize', 14);
+    title('Local Truncation Error $\epsilon$ for Embedded RK Method vs. Step Size: Dormand Prince', 'Interpreter', 'Latex', 'FontSize',20);
+    xlabel("Step size $h$ (-)", 'Interpreter', 'Latex','FontSize',18);
+    ylabel("Local Truncation Error $\epsilon$ (-)", 'Interpreter', 'Latex','FontSize',18);
     %fontsize(scale=2)  
    
 end
