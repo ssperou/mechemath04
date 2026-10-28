@@ -20,17 +20,18 @@ function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_in
 (rate_func_in,tspan,X0,h_ref,BT_struct,p,error_desired)
     % extract t0 and tf
     t0 = tspan(1);
+    t = t0;
     tf = tspan(2);
 
     %Initialize the variables
-    h = h_ref;
+    h = min(h_ref, tf - t);
     num_evals = 0;
     num_fail = 0;
     
     %Create lists
-    t_list = [t];
-    X_list = [X0];
-    h_list = [h];
+    t_list = t;
+    X_list = X0(:)';
+    h_list = [];
 
     ti = t+h;
 
@@ -58,7 +59,7 @@ function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_in
                 h_list(end + 1) = h;
             end
             num_evals = num_evals + iter;
-            h = h_next;
+            h = min(h_next, tf-t);
             ti = t + h;
 
             %Evaluate if weve gone past tf (again)

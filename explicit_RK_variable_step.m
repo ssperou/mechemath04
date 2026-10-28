@@ -32,11 +32,11 @@ function [XB, num_evals, h_next, redo] = explicit_RK_variable_step...
  %Find the next h value
  a = 0.9*(error_desired/e);
  b = (1/p);
- h_next = min(a^b, growth_limit) * h;
+ h_next = min(a^b, error_desired) * h;
  
  %Output XB
  XB = XB1;
 
  %Flag for integration if it needs to be done again
- redo = error>error_desired;
+ redo = e>error_desired;
 end
