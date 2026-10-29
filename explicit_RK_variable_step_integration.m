@@ -46,7 +46,7 @@ function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_in
         XA = X_list(end, :);
         %run the RK function
         [XB, num_evals, h_next, redo] = explicit_RK_variable_step(rate_func_in,t,XA,h,BT_struct,p,error_desired)
-        [XB,iter] = explicit_RK_step(rate_func_in,t,XA',h,BT_struct);
+        %[XB,iter] = explicit_RK_step(rate_func_in,t,XA',h,BT_struct);
 
             %Evaluate if we need to redo it; else, add to list
             if redo
