@@ -1,6 +1,4 @@
 function plottingFailureRate()
-    testfunc = ;
-    sol = ;
     
     Ralston = struct();
     Ralston.A = [0,0;2/3,0];
@@ -33,7 +31,9 @@ function plottingFailureRate()
     failed_list = zeros();
 
     for i = 1:num_iter
-        [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_integration(rate_func_in,tspan,X0,h_ref,BT_struct,p,error_desired)
-
+        [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_integration(rate_func_in,tspan,X0,h_ref,BT_struct,p,error_desired);
+        evals_list(i) = num_evals;
+        failed_list(i) = failed;
+        %#dubdubdudbuddbud
 
 end
