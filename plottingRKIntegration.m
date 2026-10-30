@@ -1,15 +1,28 @@
 function plottingRKIntegration()
     %Initialize structs
-    ForwardEuler = struct();
-    ForwardEuler.A = [0];
-    ForwardEuler.B = [1];
-    ForwardEuler.C = [0];
+    % ForwardEuler = struct();
+    % ForwardEuler.A = [0];
+    % ForwardEuler.B = [1];
+    % ForwardEuler.C = [0];
+    % 
+    % ExplicitMidpoint = struct();
+    % ExplicitMidpoint.A = [0, 0;0.5, 0];
+    % ExplicitMidpoint.B = [0, 1];
+    % ExplicitMidpoint.C = [0, 0.5];
+   
+    % Runge Kutta 4th order method RK4
+    RK4 = struct();
+    RK4.C = [0; 0.5; 0.5; 1.0];
+    RK4.A = [0    0    0    0;
+             0.5  0    0    0;
+             0    0.5  0    0;
+             0    0    1.0  0];
 
-    ExplicitMidpoint = struct();
-    ExplicitMidpoint.A = [0, 0;0.5, 0];
-    ExplicitMidpoint.B = [0, 1];
-    ExplicitMidpoint.C = [0, 0.5];
-
+    RK4.B = [1/6, 1/3, 1/3, 1/6];
+    
+   
+    
+    % HouwenWray method
     HouwenWray = struct();
     HouwenWray.A = [0, 0, 0;8/15, 0, 0;1/4, 5/12, 0];
     HouwenWray.B = [0.25, 0, 0.75];
@@ -43,8 +56,8 @@ function plottingRKIntegration()
     %Ralston Euler Integration
     [t_list_FE,X_list_FE,h_avg_FE, num_evals_FE] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,Ralston);
     
-    %Explicit Midpoint
-    [t_list_EM,X_list_EM,h_avg_EM, num_evals_EM] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,ExplicitMidpoint);
+    %RK4
+    [t_list_RK4,X_list_RK4,h_avg_RK4, num_evals_RK4] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,RK4);
     
     %Van der Houwen/Wray
     [t_list_HW,X_list_HW,h_avg_HW, num_evals_HW] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_ref,HouwenWray);
@@ -63,9 +76,9 @@ function plottingRKIntegration()
     h1 = plot(t_range, V_list(:, 1), 'k-', 'LineWidth', 4); %Analytical Solution
     hold on;
     h2 = plot(t_list_FE, X_list_FE(:, 1), 'r-', 'LineWidth', 2.75);
-    h3 = plot(t_list_EM, X_list_EM(:,1), 'b--', 'LineWidth', 2.5);
+    h3 = plot(t_list_RK4, X_list_RK4(:,1), 'b--', 'LineWidth', 2.5);
     h4 = plot(t_list_HW, X_list_HW(:, 1), 'g--', 'LineWidth', 2.25);
-    title("Runge Kutta Integration (X Component)", 'Interpreter', 'Latex','FontSize',18);
+    title("Integration of a Planetary System via Several Runge-Kutta Methods", 'Interpreter', 'Latex','FontSize',20);
     xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16); xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16);
     ylabel("$X(t)$", 'Interpreter', 'Latex','FontSize',16);
     set(gca,"TickLabelInterpreter",'latex', 'FontSize',13);
@@ -78,16 +91,16 @@ function plottingRKIntegration()
     h1 = plot(t_range, V_list(:, 2), 'k-','LineWidth', 4); %Analytical Solution
     hold on;
     h2 = plot(t_list_FE, X_list_FE(:, 2), 'r-', 'LineWidth', 2.75);
-    h3 = plot(t_list_EM, X_list_EM(:,2), 'b--', 'LineWidth', 2.5);
+    h3 = plot(t_list_RK4, X_list_RK4(:,2), 'b--', 'LineWidth', 2.5);
     h4 = plot(t_list_HW, X_list_HW(:, 2), 'g--', 'LineWidth', 2.25);
-    title("Runge Kutta Integration (Y Component)", 'Interpreter', 'Latex','FontSize',18);
+    %title("Runge Kutta Integration (Y Component)", 'Interpreter', 'Latex','FontSize',18);
     xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16); xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16);
     set(gca,"TickLabelInterpreter",'latex','FontSize',13);
-    ylabel("$X(t)$", 'Interpreter', 'Latex','FontSize',16);
+    ylabel("$Y(t)$", 'Interpreter', 'Latex','FontSize',16);
     axis([0, 36, -5, 5])
  
     
-    my_legend = legend([h1, h2, h3, h4], "Analytical", "Ralston", "Explicit Midpoint", "Houwen/Wray", "Interpreter", "Latex", "Location", "northeast");
+    my_legend = legend([h1, h2, h3, h4], "Analytical", "Ralston", "RK4", "Houwen/Wray", "Interpreter", "Latex", "Location", "northeast");
     my_legend.Layout.Tile = 'south';
   
     set(my_legend, 'orientation','horizontal', 'FontSize', 15)
