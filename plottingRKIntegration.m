@@ -72,7 +72,7 @@ function plottingRKIntegration()
 
     hold on;
 
-    %Plotting integration
+    %Plotting x integration
     h1 = plot(t_range, V_list(:, 1), 'k-', 'LineWidth', 4); %Analytical Solution
     hold on;
     h2 = plot(t_list_FE, X_list_FE(:, 1), 'r-', 'LineWidth', 2.75);

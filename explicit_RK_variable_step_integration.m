@@ -33,42 +33,31 @@ function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_in
     X_list = X0(:)';
     h_list = [];
 
-    ti = t+h;
-
-    %Make sure we don't go over the final t value
-    if ti > tf
-        ti = tf;
-        h = tf-t;
-    end
-
     %Loop through the time values
     while t < tf
-        XA = X_list(end, :);
+        %Make sure we don't go over the final t value
+        h = min(h,tf-t);
+
+        XA = X_list(end, :)';
         %run the RK function
-        [XB, num_evals, h_next, redo] = explicit_RK_variable_step(rate_func_in,t,XA,h,BT_struct,p,error_desired)
+        [XB, iter, h_next, redo] = explicit_RK_variable_step(rate_func_in,t,XA',h,BT_struct,p,error_desired)
         %[XB,iter] = explicit_RK_step(rate_func_in,t,XA',h,BT_struct);
 
             %Evaluate if we need to redo it; else, add to list
             if redo
                 num_fail = num_fail + 1;
             else
+                t=t+h;
                 X_list(end+1, :) = XB';
 
-                t = ti;
                 t_list(end + 1) = t;
                 h_list(end + 1) = h;
             end
             num_evals = num_evals + iter;
-            h = min(h_next, tf-t);
-            ti = t + h;
-
-            %Evaluate if weve gone past tf (again)
-            if ti > tf
-                ti = tf;
-                h = tf-t;
-            end
+            h = h_next;
+   
     end
 
     h_avg = mean(h_list);
-    failed = num_fail/length(t_list);
+    failed = num_fail/(num_fail+length(h_list));
 end
