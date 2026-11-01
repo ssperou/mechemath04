@@ -1,23 +1,23 @@
 function plottingRKGlobalTruncationAdaptive()
     %Initialize structs
     ForwardEuler = struct();
-    ForwardEuler.A = [0, 0;2/3, 0;];
-    ForwardEuler.B = [0.25, 0.75];
-    ForwardEuler.C = [0, 2/3];
+    ForwardEuler.A = [0, 0;1, 0;];
+    ForwardEuler.B = [1, 0; 0.5, 0.5];
+    ForwardEuler.C = [0, 1];
 
     ExplicitMidpoint = struct();
     ExplicitMidpoint.A = [0, 0;0.5, 0];
-    ExplicitMidpoint.B = [0, 1];
+    ExplicitMidpoint.B = [0, 1; 1,0];
     ExplicitMidpoint.C = [0, 0.5];
 
     HouwenWray = struct();
     HouwenWray.A = [0, 0, 0;8/15, 0, 0;1/4, 5/12, 0];
-    HouwenWray.B = [0.25, 0, 0.75];
+    HouwenWray.B = [0.25, 0, 0.75;1/16, 15/16, 0];
     HouwenWray.C = [0, 8/15, 2/3];
 
     Ralston = struct();
     Ralston.A = [0,0;2/3,0];
-    Ralston.B = [1/4,3/4];
+    Ralston.B = [1/4,3/4; 1,0];
     Ralston.C = [0, 2/3];
 
     orbit_params = struct();
@@ -52,15 +52,15 @@ function plottingRKGlobalTruncationAdaptive()
     num_iter_R = zeros(40, 1);
 
     %Forward Euler
-    for i = 1:40
-        p = 1;
-        h = h_list(i);
-        [~,X_list_FE,~, num_evals_FE] = explicit_RK_variable_step_integration(gravity_rate_func_in,t_span,X0,h,ForwardEuler, p, e_des);
-        x_real = solution(t_span(end), V0, orbit_params);
-        error_FE(i) = norm(X_list_FE(end,:).' - x_real);
-        num_iter_FE(i) = num_evals_FE;
-    end
-    log_error_FE = log10(error_FE);
+     for i = 1:40
+         p = 1;
+         h = h_list(i);
+         [~,X_list_FE,~, num_evals_FE] = explicit_RK_variable_step_integration(gravity_rate_func_in,t_span,X0,h,ForwardEuler, p, e_des);
+         x_real = solution(t_span(end), V0, orbit_params);
+         error_FE(i) = norm(X_list_FE(end,:).' - x_real);
+         num_iter_FE(i) = num_evals_FE;
+     end
+     log_error_FE = log10(error_FE);
 
     %Explicit Midpoint
     for i = 1:40
@@ -84,7 +84,7 @@ function plottingRKGlobalTruncationAdaptive()
     end
     log_error_HW = log10(error_HW);
     
-    %Ralston;s
+    %Ralston's
     for i = 1:40
        h = h_list(i);
        p = 2;
@@ -96,8 +96,8 @@ function plottingRKGlobalTruncationAdaptive()
     log_error_R = log10(error_R);
 
     %Step Size Global Trunction
-    x_FE = polyfit(log_h_list, log_error_FE, 1);
-    y_line_FE = 10.^polyval(x_FE, log_h_list);
+     x_FE = polyfit(log_h_list, log_error_FE, 1);
+     y_line_FE = 10.^polyval(x_FE, log_h_list);
     x_EM = polyfit(log_h_list, log_error_EM, 1);
     y_line_EM = 10.^polyval(x_EM, log_h_list);
     x_HW = polyfit(log_h_list, log_error_HW, 1);
@@ -137,6 +137,7 @@ function plottingRKGlobalTruncationAdaptive()
     log_evals_HW = log10(num_iter_HW);
     x_evals_HW = polyfit(log_evals_HW, log_error_HW, 1);
     y_fit_HW = 10.^polyval(x_evals_HW, log_evals_HW);
+    log_evals_R = log10(num_iter_R);
     x_evals_R = polyfit(log_evals_R, log_error_R, 1);
     y_fit_R = 10.^polyval(x_evals_R, log_evals_R);
 

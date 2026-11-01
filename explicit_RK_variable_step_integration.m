@@ -43,22 +43,21 @@ function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_in
 
     %Loop through the time values
     while t < tf
-        XA = X_list(end, :);
+        XA = X_list(end, :)';
         %run the RK function
-        [XB, num_evals, h_next, redo] = explicit_RK_variable_step(rate_func_in,t,XA,h,BT_struct,p,error_desired)
-        [XB,iter] = explicit_RK_step(rate_func_in,t,XA',h,BT_struct);
-
+        [XB, iter, h_next, redo] = explicit_RK_variable_step(rate_func_in,t,XA,h,BT_struct,p,error_desired)
+        %[XB,iter] = explicit_RK_step(rate_func_in,t,XA',h,BT_struct);
+       num_evals = num_evals + iter;
             %Evaluate if we need to redo it; else, add to list
             if redo
                 num_fail = num_fail + 1;
             else
-                X_list(end+1, :) = XB';
+                X_list(end+1, :) = XB(:)';
 
                 t = ti;
                 t_list(end + 1) = t;
                 h_list(end + 1) = h;
             end
-            num_evals = num_evals + iter;
             h = min(h_next, tf-t);
             ti = t + h;
 
