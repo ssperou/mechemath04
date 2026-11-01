@@ -25,7 +25,7 @@ function plottingRKGlobalTruncationAdaptive()
     orbit_params.m_planet = 1;
     orbit_params.G = 40;
 
-    %Initiate values
+    %Initiate values 
     x0 = 8;
     y0 = 0;
     dxdt0 = 0;
@@ -84,7 +84,7 @@ function plottingRKGlobalTruncationAdaptive()
     end
     log_error_HW = log10(error_HW);
     
-    %Ralston;s
+    %Ralston's method 
     for i = 1:40
        h = h_list(i);
        p = 2;
