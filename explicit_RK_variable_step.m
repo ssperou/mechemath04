@@ -28,11 +28,18 @@ function [XB, num_evals, h_next, redo] = explicit_RK_variable_step...
  [XB1, XB2, num_evals] = RK_step_embedded(rate_func_in, t, XA, h, BT_struct);
  %Find the error
  e = norm(XB1 - XB2);
+ alpha = 5;
 
+ if e == 0
+    h_next = alpha*h;
+ else
+    a = (error_desired/e);
+    b = (1/p);
+    h_next = 0.9*min(a^b, alpha) * h;
  %Find the next h value
- a = 0.9*(error_desired/e);
- b = (1/p);
- h_next = min(a^b, error_desired) * h;
+ % a = (error_desired/e);
+ % b = (1/p);
+ % h_next = 0.9*min(a^b, alpha) * h;
  
  %Output XB
  XB = XB1;

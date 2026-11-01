@@ -10,6 +10,16 @@ function plottingRKGlobalTruncation()
     ExplicitMidpoint.B = [0, 1];
     ExplicitMidpoint.C = [0, 0.5];
 
+    % Runge Kutta 4th order method RK4
+    RK4 = struct();
+    RK4.C = [0; 0.5; 0.5; 1.0];
+    RK4.A = [0    0    0    0;
+             0.5  0    0    0;
+             0    0.5  0    0;
+             0    0    1.0  0];
+
+    RK4.B = [1/6, 1/3, 1/3, 1/6];
+
     HouwenWray = struct();
     HouwenWray.A = [0, 0, 0;8/15, 0, 0;1/4, 5/12, 0];
     HouwenWray.B = [0.25, 0, 0.75];
