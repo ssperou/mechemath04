@@ -1,22 +1,61 @@
 function plottingRKGlobalTruncationAdaptive()
-    %Initialize structs
-    % ForwardEuler = struct();
-    % ForwardEuler.A = [0, 0;1, 0];
-    % ForwardEuler.B = [1, 0; 0.5, 0.5];
-    % ForwardEuler.C = [0, 1];
-    % 
-    % ExplicitMidpoint = struct();
-    % ExplicitMidpoint.A = [0, 0;0.5, 0];
-    % ExplicitMidpoint.B = [0, 1; 1, 0];
-    % ExplicitMidpoint.C = [0, 0.5];
+    %Initialize struct
 
-    DormandPrince.A = [0,0,0,0,0,0,0;
-        1/5, 0, 0, 0,0,0,0;...
-        3/40, 9/40, 0, 0, 0, 0,0;...
-        44/45, -56/15, 32/9, 0, 0, 0,0;...
-        19372/6561, -25360/2187, 64448/6561, -212/729, 0, 0,0;...
-        9017/3168, -355/33, 46732/5247, 49/176, -5103/18656, 0,0;...
-        35/384, 0, 500/1113, 125/192, -2187/6784, 11/84,0];
+    % DormandPrince.A = [0,0,0,0,0,0,0;
+    %     1/5, 0, 0, 0,0,0,0;...
+    %     3/40, 9/40, 0, 0, 0, 0,0;...
+    %     44/45, -56/15, 32/9, 0, 0, 0,0;...
+    %     19372/6561, -25360/2187, 64448/6561, -212/729, 0, 0,0;...
+    %     9017/3168, -355/33, 46732/5247, 49/176, -5103/18656, 0,0;...
+    %     35/384, 0, 500/1113, 125/192, -2187/6784, 11/84,0];
+    % 
+    % 
+    % orbit_params = struct();
+    % orbit_params.m_sun = 1;
+    % orbit_params.m_planet = 1;
+    % orbit_params.G = 40;
+    % 
+    % %Initiate values
+    % x0 = 8;
+    % y0 = 0;
+    % dxdt0 = 0;
+    % dydt0 = 1.5;
+    % V0 = [x0;y0;dxdt0;dydt0];
+    % t_span = [0 2*pi];
+    % solution = @compute_planetary_motion;
+    % gravity_rate_func_in = @(t, V) gravity_rate_func(t, V, orbit_params);
+    % 
+    % X0 = V0(:);
+    % x_real = solution(t_span(end), V0, orbit_params);
+    % x_real = x_real(:);
+    % 
+    % %Sweep settings: tolerance is swept, h is only the starting guess
+    % n_pts = 50;
+    % h_ref = 1e-2;
+    % growth_limit = 8;
+    % e_list = logspace(-3, 0, n_pts);
+    % e_list = e_list(end:-1:1);
+    % 
+    % 
+    % %Bounds of the linear region used for the fits (tune these by looking at the plots)
+    % %[min max] of h_avg for the step size and failure fits
+    % h_bounds_fixed = [1e-4, 1e-2];
+    % h_bounds_adaptive  = [1e-3, 1e-1];
+   
+
+
+%%%%%%%%%%%%%%%%% below is all the things w/ explicit rk methods
+
+    ForwardEuler = struct();
+    ForwardEuler.A = [0, 0;1, 0];
+    ForwardEuler.B = [1, 0; 0.5, 0.5];
+    ForwardEuler.C = [0, 1];
+
+    ExplicitMidpoint = struct();
+    ExplicitMidpoint.A = [0, 0;0.5, 0];
+    ExplicitMidpoint.B = [0, 1; 1, 0];
+    ExplicitMidpoint.C = [0, 0.5];
+
     HouwenWray = struct();
     HouwenWray.A = [0, 0, 0;8/15, 0, 0;1/4, 5/12, 0];
     HouwenWray.B = [0.25, 0, 0.75; 1/16, 15/16, 0];
