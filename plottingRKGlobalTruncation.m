@@ -1,14 +1,15 @@
 function plottingRKGlobalTruncation()
-    %Initialize structs
-    ForwardEuler = struct();
-    ForwardEuler.A = [0, 0;2/3, 0;];
-    ForwardEuler.B = [0.25, 0.75];
-    ForwardEuler.C = [0, 2/3];
-
-    ExplicitMidpoint = struct();
-    ExplicitMidpoint.A = [0, 0;0.5, 0];
-    ExplicitMidpoint.B = [0, 1];
-    ExplicitMidpoint.C = [0, 0.5];
+%using Ralston, HouwenWray, RK4    
+%Initialize structs
+    % ForwardEuler = struct();
+    % ForwardEuler.A = [0, 0;2/3, 0;];
+    % ForwardEuler.B = [0.25, 0.75];
+    % ForwardEuler.C = [0, 2/3];
+    % 
+    % ExplicitMidpoint = struct();
+    % ExplicitMidpoint.A = [0, 0;0.5, 0];
+    % ExplicitMidpoint.B = [0, 1];
+    % ExplicitMidpoint.C = [0, 0.5];
 
     % Runge Kutta 4th order method RK4
     RK4 = struct();
@@ -57,20 +58,20 @@ function plottingRKGlobalTruncation()
     error_HW = zeros(40, 1);
     num_iter_HW = zeros(40, 1);
 
-    %Forward Euler
+    %RK4
     for i = 1:40
         h = h_list(i);
-        [~,X_list_FE,~, num_evals_FE] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h,ForwardEuler);
+        [~,X_list_FE,~, num_evals_FE] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h,RK4);
         x_real = solution(t_span(end), V0, orbit_params);
         error_FE(i) = norm(X_list_FE(end,:).' - x_real);
         num_iter_FE(i) = num_evals_FE;
     end
     log_error_FE = log10(error_FE);
 
-    %Explicit Midpoint
+    %Ralston
     for i = 1:40
         h = h_list(i);
-        [~,X_list_EM,~, num_evals_EM] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h,ExplicitMidpoint);
+        [~,X_list_EM,~, num_evals_EM] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h,Ralston);
         x_real = solution(t_span(end), V0, orbit_params); x_real = x_real(:);
         error_EM(i) = norm(X_list_EM(end,:).' - x_real);
         num_iter_EM(i) = num_evals_EM;
@@ -95,24 +96,25 @@ function plottingRKGlobalTruncation()
     x_HW = polyfit(log_h_list, log_error_HW, 1);
     y_line_HW = 10.^polyval(x_HW, log_h_list);
 
-    p_FE = x_FE(1) %p value
-    p_EM = x_EM(1) %p value
-    p_HW = x_HW(1) %p value
+    p_FE = x_FE(1) %p value RK4
+    p_EM = x_EM(1) %p value Ralston
+    p_HW = x_HW(1) %p value Houwen
     
     %Plotting
     figure();
-    loglog(h_list, y_line_FE, 'k-');
+    loglog(h_list, y_line_FE, 'k-', 'LineWidth',2);
     hold on;
-    loglog(h_list, error_FE, 'r.');
-    loglog(h_list, y_line_EM, 'k-');
-    loglog(h_list, error_EM, 'b.');
-    loglog(h_list, y_line_HW, 'k-');
-    loglog(h_list, error_HW, 'g.');
+    loglog(h_list, error_FE, 'ro', 'MarkerSize', 5, 'MarkerFaceColor', 'r');
+    loglog(h_list, y_line_EM, 'k-','LineWidth',2);
+    loglog(h_list, error_EM, 'bo','MarkerSize', 5, 'MarkerFaceColor', 'b');
+    loglog(h_list, y_line_HW, 'k-','LineWidth',2);
+    loglog(h_list, error_HW, 'go','MarkerSize', 5, 'MarkerFaceColor', 'g');
     hold off;
-    title("Global Truncation vs. Step Size", "Interpreter", "Latex");
-    xlabel('$h(-)$', 'Interpreter', 'Latex');
-    ylabel('$\epsilon (-)$', 'Interpreter', 'Latex');
-    legend('Ralston Fit', 'Forward Euler Num.', 'Explicit Midpoint Fit', 'Explicit Midpoint Num.', 'Houwen Wray Fit', 'Houwen Wray Num.', 'Interpreter', 'Latex', 'Location', 'southeast');
+    title("Global Truncation Error vs. Step Size", "Interpreter", "Latex", 'FontSize',20);
+    xlabel('$h(-)$', 'Interpreter', 'Latex', 'FontSize',16);
+    ylabel('$\epsilon (-)$', 'Interpreter', 'Latex','FontSize',16);
+    legend('Fit Lines', 'RK4 Measured', '', 'Ralston Measured', '', 'Houwen Wray Measured', 'Interpreter', 'Latex', 'Location', 'southeast', 'FontSize',15);
+    set(gca,"TickLabelInterpreter",'latex', 'FontSize',13);
 
     %Num Evals
     log_evals_FE = log10(num_iter_FE);

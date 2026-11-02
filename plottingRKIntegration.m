@@ -78,11 +78,12 @@ function plottingRKIntegration()
     h2 = plot(t_list_FE, X_list_FE(:, 1), 'r-', 'LineWidth', 2.75);
     h3 = plot(t_list_RK4, X_list_RK4(:,1), 'b--', 'LineWidth', 2.5);
     h4 = plot(t_list_HW, X_list_HW(:, 1), 'g--', 'LineWidth', 2.25);
-    title("Integration of a Planetary System via Several Runge-Kutta Methods", 'Interpreter', 'Latex','FontSize',20);
-    xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16); xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16);
-    ylabel("$X(t)$", 'Interpreter', 'Latex','FontSize',16);
+    xlabel("Time (-)", 'Interpreter', 'Latex','FontSize',16);
+    ylabel("$X(t)\ (-)$", 'Interpreter', 'Latex','FontSize',16);
     set(gca,"TickLabelInterpreter",'latex', 'FontSize',13);
     axis([0, 36, -5, 10])
+    title("Integration of a Planetary System via Several Runge-Kutta Methods", 'Interpreter', 'Latex','FontSize',20);
+    
     %legend([h1, h2, h3, h4], "Analytical", "Ralston", "Explicit Midpoint", "Houwen/Wray", "Interpreter", "Latex", "Location", "northeast");
     nexttile();
     hold on;
@@ -94,9 +95,9 @@ function plottingRKIntegration()
     h3 = plot(t_list_RK4, X_list_RK4(:,2), 'b--', 'LineWidth', 2.5);
     h4 = plot(t_list_HW, X_list_HW(:, 2), 'g--', 'LineWidth', 2.25);
     %title("Runge Kutta Integration (Y Component)", 'Interpreter', 'Latex','FontSize',18);
-    xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16); xlabel("$Time\ (-)$", 'Interpreter', 'Latex','FontSize',16);
+    xlabel("Time (-)", 'Interpreter', 'Latex','FontSize',16);
     set(gca,"TickLabelInterpreter",'latex','FontSize',13);
-    ylabel("$Y(t)$", 'Interpreter', 'Latex','FontSize',16);
+    ylabel("$Y(t)\ (-)$", 'Interpreter', 'Latex','FontSize',16);
     axis([0, 36, -5, 5])
  
     

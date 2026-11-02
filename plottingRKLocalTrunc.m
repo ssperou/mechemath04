@@ -80,11 +80,11 @@ function plottingRKLocalTrunc(sol, t_ref, num_iter)
 
     %%%%%%% STEP SIZE PLOTS
     figure(1)
-    loglog(h_list, xb1_error, 'b.', 'markersize', 15, 'Displayname',"$X_{B1}$");
+    loglog(h_list, xb1_error, 'b.', 'markersize', 15, 'Displayname',"Higher Order Error Measured");
     hold on;
-    loglog(h_list, xb2_error, 'g.', 'markersize', 15, 'Displayname',"$X_{B2}$");
-    loglog(h_list, embedded_error, 'r--', 'linewidth', 2,'Displayname',"|$X_{B1}-X_{B2}$|");
-    loglog(h_list, timestep_error, 'k--', 'linewidth',2, 'Displayname',"$|f(t_{\rm ref}+h)-f(t_{\rm ref})|$");
+    loglog(h_list, xb2_error, 'g.', 'markersize', 15, 'Displayname',"Lower Order Error Measured");
+    loglog(h_list, embedded_error, 'r--', 'linewidth', 2,'Displayname',"Error Difference Measured");
+    loglog(h_list, timestep_error, 'k--', 'linewidth',2, 'Displayname',"Ground Truth Measured");
    
     grid on;
     axis([1e-4 1e0 1e-18 1e3])

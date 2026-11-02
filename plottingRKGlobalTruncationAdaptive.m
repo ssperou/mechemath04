@@ -1,15 +1,22 @@
 function plottingRKGlobalTruncationAdaptive()
     %Initialize structs
-    ForwardEuler = struct();
-    ForwardEuler.A = [0, 0;1, 0];
-    ForwardEuler.B = [1, 0; 0.5, 0.5];
-    ForwardEuler.C = [0, 1];
+    % ForwardEuler = struct();
+    % ForwardEuler.A = [0, 0;1, 0];
+    % ForwardEuler.B = [1, 0; 0.5, 0.5];
+    % ForwardEuler.C = [0, 1];
+    % 
+    % ExplicitMidpoint = struct();
+    % ExplicitMidpoint.A = [0, 0;0.5, 0];
+    % ExplicitMidpoint.B = [0, 1; 1, 0];
+    % ExplicitMidpoint.C = [0, 0.5];
 
-    ExplicitMidpoint = struct();
-    ExplicitMidpoint.A = [0, 0;0.5, 0];
-    ExplicitMidpoint.B = [0, 1; 1, 0];
-    ExplicitMidpoint.C = [0, 0.5];
-
+    DormandPrince.A = [0,0,0,0,0,0,0;
+        1/5, 0, 0, 0,0,0,0;...
+        3/40, 9/40, 0, 0, 0, 0,0;...
+        44/45, -56/15, 32/9, 0, 0, 0,0;...
+        19372/6561, -25360/2187, 64448/6561, -212/729, 0, 0,0;...
+        9017/3168, -355/33, 46732/5247, 49/176, -5103/18656, 0,0;...
+        35/384, 0, 500/1113, 125/192, -2187/6784, 11/84,0];
     HouwenWray = struct();
     HouwenWray.A = [0, 0, 0;8/15, 0, 0;1/4, 5/12, 0];
     HouwenWray.B = [0.25, 0, 0.75; 1/16, 15/16, 0];
