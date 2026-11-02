@@ -34,7 +34,7 @@ function [XB, num_evals, h_next, redo] = explicit_RK_variable_step...
     h_next = alpha*h;
  else
     a = (error_desired/e);
-    b = (1/p);
+    b = (1/(p+1));
     h_next = 0.9*min(a^b, alpha) * h;
  %Find the next h value
  % a = (error_desired/e);

@@ -16,8 +16,8 @@
 %X_list: the vector of X, [X0';X1';X2';...;(X_end)'] at each time step
 %h_avg: the average step size
 %num_evals: total number of calls made to rate_func_in during the integration
-function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_integration ...
-(rate_func_in,tspan,X0,h_ref,BT_struct,p,error_desired)
+function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_integration( ...
+    rate_func_in,tspan,X0,h_ref,BT_struct,p,error_desired,growth_limit)
     % extract t0 and tf
     t0 = tspan(1);
     t = t0;
@@ -45,7 +45,7 @@ function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_in
     while t < tf
         XA = X_list(end, :)';
         %run the RK function
-        [XB, iter, h_next, redo] = explicit_RK_variable_step(rate_func_in,t,XA,h,BT_struct,p,error_desired)
+        [XB, iter, h_next, redo] = explicit_RK_variable_step(rate_func_in,t,XA,h,BT_struct,p,error_desired);
         %[XB,iter] = explicit_RK_step(rate_func_in,t,XA',h,BT_struct);
        num_evals = num_evals + iter;
             %Evaluate if we need to redo it; else, add to list
@@ -58,7 +58,7 @@ function [t_list,X_list,h_avg, num_evals, failed] = explicit_RK_variable_step_in
                 t_list(end + 1) = t;
                 h_list(end + 1) = h;
             end
-            h = min(h_next, tf-t);
+            h = min(h_next, growth_limit*h);
             ti = t + h;
 
             %Evaluate if weve gone past tf (again)
