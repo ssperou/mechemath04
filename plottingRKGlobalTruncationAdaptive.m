@@ -66,6 +66,18 @@ function plottingRKGlobalTruncationAdaptive()
     Ralston.B = [1/4,3/4; 1,0];
     Ralston.C = [0, 2/3];
 
+    DormandPrince = struct();
+DormandPrince.C = [0, 1/5, 3/10, 4/5, 8/9, 1, 1];
+DormandPrince.B = [35/384, 0, 500/1113, 125/192, -2187/6784, 11/84, 0;...
+5179/57600, 0, 7571/16695, 393/640, -92097/339200, 187/2100, 1/40];
+DormandPrince.A = [0,0,0,0,0,0,0;
+1/5, 0, 0, 0,0,0,0;...
+3/40, 9/40, 0, 0, 0, 0,0;...
+44/45, -56/15, 32/9, 0, 0, 0,0;...
+19372/6561, -25360/2187, 64448/6561, -212/729, 0, 0,0;...
+9017/3168, -355/33, 46732/5247, 49/176, -5103/18656, 0,0;...
+35/384, 0, 500/1113, 125/192, -2187/6784, 11/84,0];
+
     orbit_params = struct();
     orbit_params.m_sun = 1;
     orbit_params.m_planet = 1;
@@ -95,12 +107,12 @@ function plottingRKGlobalTruncationAdaptive()
     %Bounds of the linear region used for the fits (tune these by looking at the plots)
     %[min max] of h_avg for the step size and failure fits
     h_bounds_FE = [1e-4, 1e-2];
-    h_bounds_EM = [1e-3, 1e-1];
+    h_bounds_EM = [1e-2, 1e0];
     h_bounds_HW = [1e-2, 1e0];
     h_bounds_R  = [1e-3, 1e-1];
     %[min max] of function evals for the efficiency fits
     evals_bounds_FE = [100, 500];
-    evals_bounds_EM = [1e2, 1e4];
+    evals_bounds_EM = [1e2, 1e3];
     evals_bounds_HW = [1e2, 1e3];
     evals_bounds_R  = [1e2, 1e4];
 
@@ -135,11 +147,13 @@ function plottingRKGlobalTruncationAdaptive()
     %     fail_FE(i) = failed;
     % end
 
-    %Explicit Midpoint
-    p = 2;
+    %DormandPrince
+    p = 5;
+    %e_list_DP = logspace(-10, -2, n_pts);
+    %e_list_DP = e_list_DP(end:-1:1);
     for i = 1:n_pts
         e_des = e_list(i);
-        [~,X_list_EM,h_avg, evals, failed] = explicit_RK_variable_step_integration(gravity_rate_func_in,t_span,X0,h_ref,ExplicitMidpoint, p, e_des, growth_limit);
+        [~,X_list_EM,h_avg, evals, failed] = explicit_RK_variable_step_integration(gravity_rate_func_in,t_span,X0,h_ref,DormandPrince, p, e_des, growth_limit);
         error_EM(i) = norm(X_list_EM(end,:).' - x_real);
         num_evals_EM(i) = evals;
         h_avg_EM(i) = h_avg;
@@ -192,9 +206,9 @@ function plottingRKGlobalTruncationAdaptive()
     %loglog(h_avg_FE, y_line_FE, 'k-', 'DisplayName', 'Forward Euler Fit');
     %hold on;
     %loglog(h_avg_FE, error_FE, 'r.', 'MarkerSize', 15, 'DisplayName', 'Forward Euler Num.');
-    loglog(h_avg_EM, y_line_EM, 'k-', 'DisplayName', 'Explicit Midpoint Fit');
+    loglog(h_avg_EM, y_line_EM, 'k-', 'DisplayName', 'RK4 Fit');
     hold on;
-    loglog(h_avg_EM, error_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'Explicit Midpoint Num.');
+    loglog(h_avg_EM, error_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'RK4 Num.');
     loglog(h_avg_HW, y_line_HW, 'k-', 'DisplayName', 'Houwen Wray Fit');
     loglog(h_avg_HW, error_HW, 'g.', 'MarkerSize', 15, 'DisplayName', 'Houwen Wray Num.');
     loglog(h_avg_R, y_line_R, 'k-', 'DisplayName', 'Ralston Fit');
@@ -229,9 +243,9 @@ function plottingRKGlobalTruncationAdaptive()
     %loglog(num_evals_FE, y_fit_FE, 'k-','DisplayName', 'Forward Euler Fit');
     %hold on;
     %loglog(num_evals_FE, error_FE, 'r.', 'MarkerSize', 15, 'DisplayName', 'Forward Euler Num.');
-    loglog(num_evals_EM, y_fit_EM, 'k-', 'DisplayName', 'Explicit Midpoint Fit');
+    loglog(num_evals_EM, y_fit_EM, 'k-', 'DisplayName', 'RK4 Fit');
     hold on;
-    loglog(num_evals_EM, error_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'Explicit Midpoint Num.');
+    loglog(num_evals_EM, error_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'RK4 Num.');
     loglog(num_evals_HW, y_fit_HW, 'k-', 'DisplayName', 'Houwen Wray Fit');
     loglog(num_evals_HW, error_HW, 'g.', 'MarkerSize', 15, 'DisplayName', 'Houwen Wray Num.');
     loglog(num_evals_R, y_fit_R, 'k-', 'DisplayName', 'Ralston Fit');
@@ -277,9 +291,9 @@ function plottingRKGlobalTruncationAdaptive()
     %loglog(h_avg_FE, y_fail_FE, 'k-', 'DisplayName', 'Forward Euler Fit');
     %hold on;
     %loglog(h_avg_FE, fail_FE, 'r.', 'MarkerSize', 15, 'DisplayName', 'Forward Euler Num.');
-    loglog(h_avg_EM, y_fail_EM, 'k-', 'DisplayName', 'Explicit Midpoint Fit');
+    loglog(h_avg_EM, y_fail_EM, 'k-', 'DisplayName', 'RK4 Fit');
     hold on;
-    loglog(h_avg_EM, fail_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'Explicit Midpoint Num.');
+    loglog(h_avg_EM, fail_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'RK4 Num.');
     loglog(h_avg_HW, y_fail_HW, 'k-', 'DisplayName', 'Houwen Wray Fit');
     loglog(h_avg_HW, fail_HW, 'g.', 'MarkerSize', 15, 'DisplayName', 'Houwen Wray Num.');
     loglog(h_avg_R, y_fail_R, 'k-', ...
