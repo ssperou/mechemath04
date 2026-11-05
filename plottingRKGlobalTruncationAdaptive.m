@@ -122,6 +122,7 @@ DormandPrince.A = [0,0,0,0,0,0,0;
     h_avg_FE = zeros(n_pts, 1);
     fail_FE = zeros(n_pts, 1);
     error_EM = zeros(n_pts, 1);
+    error_EM_fix = zeros(n_pts, 1);
     num_evals_EM = zeros(n_pts, 1);
     h_avg_EM = zeros(n_pts, 1);
     fail_EM = zeros(n_pts, 1);
@@ -154,7 +155,9 @@ DormandPrince.A = [0,0,0,0,0,0,0;
     for i = 1:n_pts
         e_des = e_list(i);
         [~,X_list_EM,h_avg, evals, failed] = explicit_RK_variable_step_integration(gravity_rate_func_in,t_span,X0,h_ref,DormandPrince, p, e_des, growth_limit);
+        [t_list,X_list_fix,h_avg, num_evals] = explicit_RK_fixed_step_integration(gravity_rate_func_in,t_span,X0,h_avg,DormandPrince)
         error_EM(i) = norm(X_list_EM(end,:).' - x_real);
+        error_EM_fix(i) = norm(X_list_fix(end,:).' - x_real);
         num_evals_EM(i) = evals;
         h_avg_EM(i) = h_avg;
         fail_EM(i) = failed;
@@ -165,6 +168,7 @@ DormandPrince.A = [0,0,0,0,0,0,0;
     for i = 1:n_pts
         e_des = e_list(i);
         [~,X_list_HW,h_avg, evals, failed] = explicit_RK_variable_step_integration(gravity_rate_func_in,t_span,X0,h_ref,HouwenWray, p, e_des, growth_limit);
+        [t_list,X_list,h_avg, num_evals] = explicit_RK_fixed_step_integration(rate_func_in,tspan,X0,h_ref,HouwenWray)
         error_HW(i) = norm(X_list_HW(end,:).' - x_real);
         num_evals_HW(i) = evals;
         h_avg_HW(i) = h_avg;
@@ -206,16 +210,16 @@ DormandPrince.A = [0,0,0,0,0,0,0;
     %loglog(h_avg_FE, y_line_FE, 'k-', 'DisplayName', 'Forward Euler Fit');
     %hold on;
     %loglog(h_avg_FE, error_FE, 'r.', 'MarkerSize', 15, 'DisplayName', 'Forward Euler Num.');
-    loglog(h_avg_EM, y_line_EM, 'k-', 'DisplayName', 'RK4 Fit');
+    loglog(h_avg_EM, y_line_EM, 'k-', 'DisplayName', 'DormandPrince Fit');
     hold on;
-    loglog(h_avg_EM, error_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'RK4 Num.');
+    loglog(h_avg_EM, error_EM, 'b.', 'MarkerSize', 15, 'DisplayName', 'DormandPrince Num.');
     loglog(h_avg_HW, y_line_HW, 'k-', 'DisplayName', 'Houwen Wray Fit');
     loglog(h_avg_HW, error_HW, 'g.', 'MarkerSize', 15, 'DisplayName', 'Houwen Wray Num.');
     loglog(h_avg_R, y_line_R, 'k-', 'DisplayName', 'Ralston Fit');
     loglog(h_avg_R, error_R, 'm.', 'MarkerSize', 15, 'DisplayName', 'Ralston Num.');
     hold off;
     grid on;
-    title("Global Truncation vs. Average Step Size", "Interpreter", "Latex");
+    title("Global Truncation vs. Average Step Size (DormandPrince)", "Interpreter", "Latex");
     xlabel('$h_{avg}(-)$', 'Interpreter', 'Latex');
     ylabel('$\epsilon (-)$', 'Interpreter', 'Latex');
     legend('Interpreter', 'Latex', 'Location', 'northwest');
