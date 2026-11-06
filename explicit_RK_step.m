@@ -15,36 +15,27 @@
 % formula depends on the integration method used
 %num_evals: A count of the number of times that you called
 % rate_func_in when computing the next step
-function [XB, num_evals] = explicit_RK_step(rate_func_in,t,XA,h,BT_struct)
-    a = BT_struct.A; %current a value
-    b = BT_struct.B; %current b value
-    c = BT_struct.C; %current c value
-    
+function [XB, num_evals] = explicit_RK_step(rate_func_in, t, XA, h, BT_struct)
+    a = BT_struct.A;
+    b = BT_struct.B(1,:);      % main (higher-order) solution weights
+    c = BT_struct.C;
     num_evals = 0;
-    %Create K matrix
-    m = length(XA); %should only equal 1
-    s = length(b); %number of stages
-    K = zeros(m, s);
-    
-    %Create for loop for K
-    for i = 1:s
-        ai = a(i, 1:i-1);
-        ci = c(i);
-        
-        ti = t + ci*h;
 
+    XA = XA(:);                % force column
+    m = numel(XA);             % state dimension (4 for the orbit)
+    s = numel(b);              % number of stages
+    K = zeros(m, s);
+
+    for i = 1:s
+        ti = t + c(i)*h;
         if i == 1
             Xi = XA;
         else
-            sumi = K(:, 1:i-1)*ai';
-            Xi = XA + h*sumi;
+            Xi = XA + h*(K(:, 1:i-1) * a(i, 1:i-1)');
         end
         K(:, i) = rate_func_in(ti, Xi);
         num_evals = num_evals + 1;
     end
 
-    sumb = K*b(:);
-
-    XB = XA + h*sumb;
-
+    XB = XA + h*(K*b(:));      % column vector
 end
