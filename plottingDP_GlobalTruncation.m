@@ -97,19 +97,19 @@ function plottingDP_GlobalTruncation()
     loglog(h_avg_fix, error_fix, 'b.', 'MarkerSize', 15, ...
         'DisplayName', 'DP Fixed Num.');
     hold on;
-    loglog(h_avg_fix, yfit_fix, 'k-', 'LineWidth', 1.5, ...
+    loglog(h_avg_fix, yfit_fix, 'k-', 'LineWidth', 2, ...
         'DisplayName', sprintf('DP Fixed Fit', slope_fix));
     loglog(h_avg_var, error_var, 'r.', 'MarkerSize', 15, ...
         'DisplayName', 'DP Adaptive Num.');
-    loglog(h_avg_var, yfit_var, 'k-', 'LineWidth', 1.5, ...
+    loglog(h_avg_var, yfit_var, 'k-', 'LineWidth', 2, ...
         'DisplayName', sprintf('DP Adaptive Fit', slope_var));
     hold off;
     grid on;
-    set(gca, 'XScale', 'log', 'YScale', 'log');
-    title('Global Truncation vs. Average Step Size (Dormand-Prince)', 'FontSize', 17, 'Interpreter', 'Latex');
-    xlabel('$h_{avg}(-)$', 'Interpreter', 'Latex', 'FontSize', 13);
-    ylabel('$\epsilon (-)$', 'Interpreter', 'Latex', 'FontSize', 13);
-    legend('Location', 'northwest', 'Interpreter', 'Latex');
+    set(gca, 'XScale', 'log', 'YScale', 'log',"TickLabelInterpreter",'latex', 'Fontsize',12);
+    title('Global Truncation Error vs. Average Step Size (Dormand-Prince)', 'FontSize', 20, 'Interpreter', 'Latex');
+    xlabel('$h_{avg}(-)$', 'Interpreter', 'Latex', 'FontSize', 15);
+    ylabel('$\epsilon (-)$', 'Interpreter', 'Latex', 'FontSize', 15);
+    legend('Location', 'northwest', 'Interpreter', 'Latex', 'FontSize',15);
 
     %% Number of evaluations: fits (same error-based fit region as above)
     mask_fix_e = isfinite(error_fix) & isfinite(evals_fix) & ...
@@ -128,19 +128,19 @@ function plottingDP_GlobalTruncation()
     loglog(evals_fix, error_fix, 'b.', 'MarkerSize', 15, ...
         'DisplayName', 'DP Fixed Num.');
     hold on;
-    loglog(evals_fix, yfit_fix_e, 'k-', 'LineWidth', 1.5, ...
+    loglog(evals_fix, yfit_fix_e, 'k-', 'LineWidth', 2, ...
         'DisplayName', sprintf('DP Fixed Fit', slope_fix_e));
     loglog(evals_var, error_var, 'r.', 'MarkerSize', 15, ...
         'DisplayName', 'DP Adaptive Num.');
-    loglog(evals_var, yfit_var_e, 'k-', 'LineWidth', 1.5, ...
+    loglog(evals_var, yfit_var_e, 'k-', 'LineWidth', 2, ...
         'DisplayName', sprintf('DP Adaptive Fit', slope_var_e));
     hold off;
     grid on;
-    set(gca, 'XScale', 'log', 'YScale', 'log');
-    title('Global Truncation vs. Number of Evaluations (Dormand-Prince)', 'Interpreter', 'Latex', 'FontSize', 17);
-    xlabel('$NumEvals(-)$', 'Interpreter', 'Latex', 'FontSize', 13);
-    ylabel('$\epsilon (-)$', 'Interpreter', 'Latex', 'FontSize', 13);
-    legend('Location', 'southwest', 'Interpreter', 'Latex');
+    set(gca, 'XScale', 'log', 'YScale', 'log',"TickLabelInterpreter",'latex', 'Fontsize',12);
+    title('Global Truncation Error vs. Number of Evaluations (Dormand-Prince)', 'Interpreter', 'Latex', 'FontSize', 19);
+    xlabel('$NumEvals(-)$', 'Interpreter', 'Latex', 'FontSize', 15);
+    ylabel('$\epsilon (-)$', 'Interpreter', 'Latex', 'FontSize', 15);
+    legend('Location', 'southwest', 'Interpreter', 'Latex', 'FontSize',15);
 
     %% Failure rate vs. average step size (adaptive only: fixed step never rejects)
     % A log axis can't show zero, and if EVERY failure rate is zero there is no
@@ -159,11 +159,11 @@ function plottingDP_GlobalTruncation()
     loglog(h_avg_var(pos_mask), fail_var(pos_mask), 'r.', 'MarkerSize', 15, ...
         'DisplayName', 'DP Adaptive Num.');
     grid on;
-    set(gca, 'XScale', 'log', 'YScale', 'log');
-    title('Failure Rate (\%) vs. Average Step Size (Dormand-Prince)', 'Interpreter', 'Latex', 'FontSize', 17);
-    xlabel('$h_{avg}(-)$', 'Interpreter', 'Latex', 'FontSize', 13);
-    ylabel('Failure Rate (-)', 'Interpreter', 'Latex', 'FontSize', 13);
-    legend('Location', 'southeast', 'Interpreter', 'Latex');
+    set(gca, 'XScale', 'log', 'YScale', 'log',"TickLabelInterpreter",'latex', 'Fontsize',12);
+    title('Failure Rate vs. Average Step Size (Dormand-Prince)', 'Interpreter', 'Latex', 'FontSize', 20);
+    xlabel('$h_{avg}(-)$', 'Interpreter', 'Latex', 'FontSize', 15);
+    ylabel('Failure Rate (-)', 'Interpreter', 'Latex', 'FontSize', 15);
+    legend('Location', 'southeast', 'Interpreter', 'Latex', 'FontSize', 15);
 end
 
 function [slope, yfit] = fit_loglog(h, err, mask)
