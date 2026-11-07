@@ -17,16 +17,6 @@ function orbit_plotting()
                        9017/3168, -355/33, 46732/5247, 49/176, -5103/18656, 0, 0;
                        35/384, 0, 500/1113, 125/192, -2187/6784, 11/84, 0];
 
-    HeunEuler = struct();
-    HeunEuler.C = [0,1];
-    HeunEuler.B = [1/2,1/2;1,0];
-    HeunEuler.A = [0,0;1,0];
-
-    Bogacki = struct();
-    Bogacki.C = [0,1/2, 3/4, 1];
-    Bogacki.B = [2/9, 1/3, 4/9, 0; 7/24, 1/4, 1/3, 1/8];
-    Bogacki.A = [0,0,0,0; 1/2,0,0,0; 0,3/4,0,0; 2/9,1/3, 4/9, 0];
-
     %Find initial values
     x0 = 8;
     y0 = 0;
@@ -38,60 +28,73 @@ function orbit_plotting()
     t_span = [0 35];
     grav_func = @(t, V) gravity_rate_func(t, V, orbit_params);
 
+    p = 5;
+    h_ref = 1e-2;
+    e_des = 1e-6;
+    grow_lim = 2;
+    sun = [0 0];
+
     %Analytical solution
     V_list = compute_planetary_motion(t_range, V0, orbit_params);
     X0 = V_list(:, 1);
-
+    
+    [tlist_DP, Xlist_DP] = explicit_RK_variable_step_integration(grav_func, t_span, V0, h_ref,  DormandPrince, p, e_des, grow_lim);
     %Run each method's integration
-    [tlist_DP, Xlist_DP] = explicit_RK_fixed_step_integration(grav_func, t_span, V0, h_ref, DormandPrince);
-    [tlist_HE, Xlist_HE] = explicit_RK_fixed_step_integration(grav_func, t_span, V0, h_ref, HeunEuler);
-    [tlist_Bo, Xlist_Bo] = explicit_RK_fixed_step_integration(grav_func, t_span, V0, h_ref, Bogacki);
-
+   
     %Plot x and y vx time; tiled
     figure(1)
     t = tiledlayout(2, 1, "tilespacing", "compact", "padding", "compact");
-    title(t, "RK Methods vs. Analytical Solution", "Interpreter", "Latex", "FontSize", 17)
+    title(t, 'Planetary System Integration, Desired Error Threshold = $10^{-6}$ (Dormand-Prince)', ...
+    'Interpreter', 'latex', ...
+    'FontSize', 17, 'Fontname', 'Times New Roman');
 
-    nexttile(1)
+    nexttile(1) % position
     hold on
     grid on
-    plot(t_range, V_list(:, 1), 'k--');
-    plot(tlist_DP, Xlist_DP(:, 1), 'r--', "LineWidth", 5);
-    plot(tlist_HE, Xlist_HE(:, 1), 'b--', "LineWidth", 4);
-    plot(tlist_Bo, Xlist_Bo(:, 1), 'g--', "LineWidth", 3);
+    plot(t_range, V_list(:, 1), 'k-','Linewidth',3, 'HandleVisibility','off');
+    plot(t_range, V_list(:, 2), 'k-','Linewidth',3);
+    plot(tlist_DP, Xlist_DP(:, 1), 'ro-','markerfacecolor','r','markeredgecolor','r','markersize',3, 'LineWidth',1);
+    plot(tlist_DP, Xlist_DP(:, 2), 'go-','markerfacecolor','g','markeredgecolor','g','markersize',3,'LineWidth',1);
+    
     hold off
-    title("$X$ Values vs. Time", "Interpreter", "Latex", "FontSize", 15)
-    xlabel("Time (-)", "Interpreter", "Latex", "FontSize", 12)
-    ylabel("$X$ Value (-)", "Interpreter", "Latex", "FontSize", 12)
-    legend("Analytical", "Dormand-Prince", "Heun-Euler", "Bogacki", "Interpreter", "Latex");
+    title("Position vs. Time", "Interpreter", "Latex", "FontSize", 15)
+    xlabel("Time (-)", "Interpreter", "Latex", "FontSize", 14)
+    ylabel("Position (-)", "Interpreter", "Latex", "FontSize", 14)
+    set(gca,"TickLabelInterpreter",'latex', 'FontSize',13);
+    legend("Analytical", "x-position", "y-position", "Interpreter", "Latex", 'location', 'best');
+ 
 
-    nexttile(2)
+    nexttile(2) % velocity
     hold on
     grid on
-    plot(t_range, V_list(:, 2), 'k--');
-    plot(tlist_DP, Xlist_DP(:, 2), 'r--', "LineWidth", 5);
-    plot(tlist_HE, Xlist_HE(:, 2), 'b--', "LineWidth", 4);
-    plot(tlist_Bo, Xlist_Bo(:, 2), 'g--', "LineWidth", 3);
+    plot(t_range, V_list(:, 3), 'k-','Linewidth',3, 'HandleVisibility','off');
+    plot(t_range, V_list(:, 4), 'k-','Linewidth',3);
+    plot(tlist_DP, Xlist_DP(:, 3), 'ro-','markerfacecolor','r','markeredgecolor','r','markersize',3);
+    plot(tlist_DP, Xlist_DP(:, 4), 'go-','markerfacecolor','g','markeredgecolor','g','markersize',3);
+    
     hold off
-    title("$Y$ Values vs. Time", "Interpreter", "Latex", "FontSize", 15)
-    xlabel("Time (-)", "Interpreter", "Latex", "FontSize", 12)
-    ylabel("$Y$ Value (-)", "Interpreter", "Latex", "FontSize", 12)
-    legend("Analytical", "Dormand-Prince", "Heun-Euler", "Bogacki", "Interpreter", "Latex");
+    title("Velocity vs. Time", "Interpreter", "Latex", "FontSize", 15)
+    xlabel("Time (-)", "Interpreter", "Latex", "FontSize", 14)
+    ylabel("Velocity (-)", "Interpreter", "Latex", "FontSize", 14)
+    set(gca,"TickLabelInterpreter",'latex', 'FontSize',13);
+    legend("Analytical", "x-velocity","y-velocity", "Interpreter", "Latex", 'location', 'best');
+    
 
+   
     %Plot orbit path
-    figure(2)
-    axis equal; axis square;
-    axis([-20,20,-20,20]);
-    hold ;
-    plot(0,0,'yo','markerfacecolor','r','markersize',15);
-    plot(V_list(:, 1), V_list(:, 2), 'k--');
-    plot(Xlist_DP(:, 1), Xlist_DP(:, 2), 'r--', "LineWidth", 5);
-    plot(Xlist_HE(:, 1), Xlist_HE(:, 2), 'b--', "LineWidth", 4);
-    plot(Xlist_Bo(:, 1), Xlist_Bo(:, 2), 'g--', "LineWidth", 3);
-    hold off
-    title("Orbit Paths of Three RK Methods vs. Analytical Solution", "Interpreter", "Latex", "FontSize", 17)
-    xlabel("$X$ Position", "Interpreter", "Latex", "FontSize", 12);
-    ylabel("$Y$ Position", "Interpreter", "Latex", "FontSize", 12);
-    legend("Sun", "Analytical", "Dormand-Prince", "Heun-Euler", "Bogacki", "Interpreter", "Latex");
-
-end
+%     figure(2)
+%     axis equal; axis square;
+%     axis([-20,20,-20,20]);
+%     hold ;
+%     plot(0,0,'yo','markerfacecolor','r','markersize',15);
+%     plot(V_list(:, 1), V_list(:, 2), 'k--');
+%     plot(Xlist_DP(:, 1), Xlist_DP(:, 2), 'r--', "LineWidth", 5);
+%     % plot(Xlist_HE(:, 1), Xlist_HE(:, 2), 'b--', "LineWidth", 4);
+%     % plot(Xlist_Bo(:, 1), Xlist_Bo(:, 2), 'g--', "LineWidth", 3);
+%     hold off
+%     title("Orbit Paths of Three RK Methods vs. Analytical Solution", "Interpreter", "Latex", "FontSize", 17)
+%     xlabel("$X$ Position", "Interpreter", "Latex", "FontSize", 12);
+%     ylabel("$Y$ Position", "Interpreter", "Latex", "FontSize", 12);
+%     legend("Sun", "Analytical", "Dormand-Prince", "Heun-Euler", "Bogacki", "Interpreter", "Latex");
+% 
+% end

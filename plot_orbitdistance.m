@@ -51,8 +51,8 @@ function plot_orbitdistance()
     scatter(h_list, dist, 15, 'filled');
     grid on
     title('Step Size vs. Distance from Sun (Dormand-Prince)', "Interpreter", "Latex", "FontSize", 17)
-    xlabel ("Step Size (-)", "Interpreter", "Latex", "FontSize", 12)
-    ylabel ("Distance (-)", "Interpreter", "Latex", "FontSize", 12)
-    set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 12);
+    xlabel ("Step Size (-)", "Interpreter", "Latex", "FontSize", 15)
+    ylabel ("Distance (-)", "Interpreter", "Latex", "FontSize", 15)
+    set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 14);
 
 end
