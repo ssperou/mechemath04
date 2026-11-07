@@ -47,25 +47,51 @@ function orbit_plotting()
     [tlist_HE, Xlist_HE] = explicit_RK_fixed_step_integration(grav_func, t_span, V0, h_ref, HeunEuler);
     [tlist_Bo, Xlist_Bo] = explicit_RK_fixed_step_integration(grav_func, t_span, V0, h_ref, Bogacki);
 
-    %Plot time vs position
+    %Plot x and y vx time; tiled
     figure(1)
-    plot(t_range, V_list, 'k--');
+    t = tiledlayout(2, 1, "tilespacing", "compact", "padding", "compact");
+    title(t, "RK Methods vs. Analytical Solution", "Interpreter", "Latex", "FontSize", 17)
+
+    nexttile(1)
     hold on
-    plot(tlist_DP, Xlist_DP, 'r--');
-    plot(tlist_HE, Xlist_HE, 'b--');
-    plot(tlist_Bo, Xlist_Bo, 'g--');
+    grid on
+    plot(t_range, V_list(:, 1), 'k--');
+    plot(tlist_DP, Xlist_DP(:, 1), 'r--', "LineWidth", 5);
+    plot(tlist_HE, Xlist_HE(:, 1), 'b--', "LineWidth", 4);
+    plot(tlist_Bo, Xlist_Bo(:, 1), 'g--', "LineWidth", 3);
     hold off
+    title("$X$ Values vs. Time", "Interpreter", "Latex", "FontSize", 15)
+    xlabel("Time (-)", "Interpreter", "Latex", "FontSize", 12)
+    ylabel("$X$ Value (-)", "Interpreter", "Latex", "FontSize", 12)
+    legend("Analytical", "Dormand-Prince", "Heun-Euler", "Bogacki", "Interpreter", "Latex");
+
+    nexttile(2)
+    hold on
+    grid on
+    plot(t_range, V_list(:, 2), 'k--');
+    plot(tlist_DP, Xlist_DP(:, 2), 'r--', "LineWidth", 5);
+    plot(tlist_HE, Xlist_HE(:, 2), 'b--', "LineWidth", 4);
+    plot(tlist_Bo, Xlist_Bo(:, 2), 'g--', "LineWidth", 3);
+    hold off
+    title("$Y$ Values vs. Time", "Interpreter", "Latex", "FontSize", 15)
+    xlabel("Time (-)", "Interpreter", "Latex", "FontSize", 12)
+    ylabel("$Y$ Value (-)", "Interpreter", "Latex", "FontSize", 12)
+    legend("Analytical", "Dormand-Prince", "Heun-Euler", "Bogacki", "Interpreter", "Latex");
 
     %Plot orbit path
     figure(2)
     axis equal; axis square;
     axis([-20,20,-20,20]);
     hold ;
-    plot(0,0,'ro','markerfacecolor','r','markersize',5);
+    plot(0,0,'yo','markerfacecolor','r','markersize',15);
     plot(V_list(:, 1), V_list(:, 2), 'k--');
-    plot(Xlist_DP(:, 1), Xlist_DP(:, 2), 'r--');
-    plot(Xlist_HE(:, 1), Xlist_HE(:, 2), 'b--');
-    plot(Xlist_Bo(:, 1), Xlist_Bo(:, 2), 'g--');
+    plot(Xlist_DP(:, 1), Xlist_DP(:, 2), 'r--', "LineWidth", 5);
+    plot(Xlist_HE(:, 1), Xlist_HE(:, 2), 'b--', "LineWidth", 4);
+    plot(Xlist_Bo(:, 1), Xlist_Bo(:, 2), 'g--', "LineWidth", 3);
     hold off
+    title("Orbit Paths of Three RK Methods vs. Analytical Solution", "Interpreter", "Latex", "FontSize", 17)
+    xlabel("$X$ Position", "Interpreter", "Latex", "FontSize", 12);
+    ylabel("$Y$ Position", "Interpreter", "Latex", "FontSize", 12);
+    legend("Sun", "Analytical", "Dormand-Prince", "Heun-Euler", "Bogacki", "Interpreter", "Latex");
 
 end
